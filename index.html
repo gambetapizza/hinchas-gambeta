@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Club de Hinchas - Gambeta Pizza</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #A00000;
+      --red-glow: rgba(160, 0, 0, 0.3);
+      --white: #ffffff;
+      --gray: #888888;
+      --bg: #0a0a0a;
+      --card: #111111;
+      --border: #222222;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--white);
+      font-family: 'Space Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 60% 20%, rgba(160,0,0,0.08) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      position: relative;
+      z-index: 1;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--red);
+      color: var(--white);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      padding: 0.3rem 0.8rem;
+      margin-bottom: 1.2rem;
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%);
+    }
+
+    h1 {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(2rem, 6vw, 3rem);
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+      margin-bottom: 1rem;
+    }
+
+    h1 span {
+      color: var(--red);
+      display: block;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: var(--gray);
+      line-height: 1.6;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+      border-left: 2px solid var(--red);
+      padding-left: 1rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      position: relative;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--red), transparent);
+    }
+
+    .field {
+      margin-bottom: 1.4rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 0.5rem;
+    }
+
+    label .req {
+      color: var(--red);
+      margin-left: 2px;
+    }
+
+    input {
+      width: 100%;
+      background: #0a0a0a;
+      border: 1px solid var(--border);
+      color: var(--white);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.95rem;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+      border-radius: 0;
+    }
+
+    input:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px var(--red-glow);
+    }
+
+    input::placeholder { color: #444; }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.4);
+      cursor: pointer;
+    }
+
+    .optional-note {
+      font-size: 0.7rem;
+      color: #555;
+      margin-top: 0.3rem;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.8rem 0;
+    }
+
+    button {
+      width: 100%;
+      background: var(--red);
+      color: var(--white);
+      border: none;
+      font-family: 'Space Mono', monospace;
+      font-size: 1.1rem;
+      letter-spacing: 0.15em;
+      padding: 1rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button:hover { background: #c00000; }
+    button:active { transform: scale(0.99); }
+
+    button:disabled {
+      background: #333;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .success {
+      display: none;
+      text-align: center;
+      padding: 2.5rem 1rem;
+    }
+
+    .success-icon {
+      width: 56px;
+      height: 56px;
+      border: 2px solid var(--red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+
+    .success-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--red);
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .success h2 {
+      font-family: 'Space Mono', monospace;
+      font-size: 2rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .success p {
+      color: var(--gray);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    .error-msg {
+      display: none;
+      background: rgba(160,0,0,0.1);
+      border: 1px solid var(--red);
+      color: #ff6666;
+      font-size: 0.82rem;
+      padding: 0.75rem 1rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="badge">⚽ Club Oficial</div>
+    <h1>Club de<span>Hinchas</span></h1>
+    <p class="subtitle">Únete al Club de Hinchas de Gambeta Pizza y recibe beneficios exclusivos</p>
+
+    <div class="card">
+      <form id="form">
+        <div class="field">
+          <label>Nombre completo <span class="req">*</span></label>
+          <input type="text" id="nombre" placeholder="Tu nombre" required autocomplete="name">
+        </div>
+
+        <div class="field">
+          <label>Fecha de cumpleaños <span class="req">*</span></label>
+          <input type="date" id="cumpleanos" required>
+        </div>
+
+        <div class="field">
+          <label>Correo electrónico</label>
+          <input type="email" id="correo" placeholder="tucorreo@ejemplo.com" autocomplete="email">
+          <p class="optional-note">Opcional — para comunicaciones futuras</p>
+        </div>
+
+        <div class="field">
+          <label>Dirección <span class="req">*</span></label>
+          <input type="text" id="direccion" placeholder="Tu dirección" required autocomplete="street-address">
+        </div>
+
+        <hr class="divider">
+
+        <button type="submit" id="btn">
+          <span id="btn-text">UNIRME AL CLUB</span>
+          <div class="spinner" id="spinner"></div>
+        </button>
+        <div class="error-msg" id="error">Hubo un problema al enviar tu registro. Intenta de nuevo.</div>
+      </form>
+
+      <div class="success" id="success">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2>¡Ya eres Hincha!</h2>
+        <p>Tu registro fue exitoso. Pronto recibirás tus primeros beneficios exclusivos.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const WEBHOOK_URL = 'https://testeo-n8n.e55iil.easypanel.host/webhook/2fbe5e38-7ef4-4eb6-a136-9f18f48d9bab';
+
+    // Leer celular desde query param ?celular=XXXX
+    const params = new URLSearchParams(window.location.search);
+    const celular = params.get('celular') || '';
+
+    document.getElementById('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const btn = document.getElementById('btn');
+      const btnText = document.getElementById('btn-text');
+      const spinner = document.getElementById('spinner');
+      const errorMsg = document.getElementById('error');
+
+      const nombre = document.getElementById('nombre').value.trim();
+      const cumpleanos = document.getElementById('cumpleanos').value;
+      const correo = document.getElementById('correo').value.trim();
+      const direccion = document.getElementById('direccion').value.trim();
+
+      btn.disabled = true;
+      btnText.style.display = 'none';
+      spinner.style.display = 'block';
+      errorMsg.style.display = 'none';
+
+      try {
+        const res = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nombre,
+            celular,
+            cumpleanos,
+            correo: correo || null,
+            direccion,
+            fecha_registro: new Date().toISOString().split('T')[0]
+          })
+        });
+
+        if (!res.ok) throw new Error('Error en el servidor');
+
+        document.getElementById('form').style.display = 'none';
+        document.getElementById('success').style.display = 'block';
+
+      } catch (err) {
+        errorMsg.style.display = 'block';
+        btn.disabled = false;
+        btnText.style.display = 'block';
+        spinner.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
